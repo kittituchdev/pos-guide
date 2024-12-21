@@ -7,17 +7,18 @@ import (
 )
 
 func main() {
-    app := fiber.New()
+	app := fiber.New()
 
-    config.ConnectDatabase()
+	config.ConnectDatabase()
 
-    app.Get("/", func(c *fiber.Ctx) error {
-        return c.JSON(&fiber.Map{"data": "Hello from Fiber & mongoDB"})
-    })
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON(&fiber.Map{"data": "Hello from Fiber & mongoDB"})
+	})
 
-    // Register routes
+	// Register routes
 	routes.UserRoutes(app)
+	routes.CategoryRoutes(app)
+	routes.OptionRoutes(app)
 
-    app.Listen(":8080")
+	app.Listen(":8080")
 }
-

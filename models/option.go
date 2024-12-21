@@ -14,7 +14,7 @@ type Option struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Name        string             `bson:"name" json:"name"`
 	Price       float64            `bson:"price" json:"price"`
-	OptionGroup primitive.ObjectID `bson:"optionGroup" json:"optionGroup"`
+	OptionGroup primitive.ObjectID `bson:"optionGroup,omitempty" json:"optionGroup,omitempty"`
 	IsActive    bool               `bson:"isActive" json:"isActive"`
 	IsDelete    bool               `bson:"isDelete" json:"isDelete"`
 	CreatedAt   int64              `bson:"createdAt" json:"createdAt"` // Milliseconds since epoch

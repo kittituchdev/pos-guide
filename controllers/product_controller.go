@@ -59,7 +59,7 @@ func CreateProduct(c *fiber.Ctx) error {
 	})
 }
 
-func GetProducts(c *fiber.Ctx) error {
+func GetAllProduct(c *fiber.Ctx) error {
 	// Fetch all products
 	result, err := models.FindAllProduct()
 	if err != nil {

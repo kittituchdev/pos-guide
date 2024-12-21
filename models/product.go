@@ -89,6 +89,8 @@ func UpdateProduct(productId string, product Product) error {
 	update := bson.M{"$set": bson.M{
 		"name":        product.Name,
 		"description": product.Description,
+		"options":     product.Options,
+		"categories":  product.Categories,
 		"price":       product.Price,
 		"stock":       product.Stock,
 		"updatedAt":   product.UpdatedAt,
