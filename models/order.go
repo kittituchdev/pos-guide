@@ -13,9 +13,9 @@ type Order struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	OrderNumber string             `bson:"orderNumber" json:"orderNumber"`
 	TotalPrice  float64            `bson:"totalPrice" json:"totalPrice"`
-	Items       []OrderItem        `bson:"items" json:"items"`
-	IsActive    bool               `bson:"isActive" json:"isActive"`
-	IsDelete    bool               `bson:"isDelete" json:"isDelete"`
+	OrderItems  []OrderItem        `bson:"orderItems" json:"orderItems"`
+	Status      string             `bson:"status" json:"status"`
+	IsCancel    bool               `bson:"isCancel" json:"isCancel"`
 	CreatedAt   int64              `bson:"createdAt" json:"createdAt"` // Milliseconds since epoch
 	CreatedBy   string             `bson:"createdBy" json:"createdBy"`
 	UpdatedAt   int64              `bson:"updatedAt" json:"updatedAt"` // Milliseconds since epoch

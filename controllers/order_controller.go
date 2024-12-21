@@ -20,14 +20,20 @@ func CreateOrder(c *fiber.Ctx) error {
 		})
 	}
 
+	if len(order.OrderItems) == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Order items are required",
+		})
+	}
+
 	// Generate Order Number
 	order.OrderNumber = utils.GenerateOrderNumber()
 
 	// Set default values
 	order.CreatedAt = time.Now().UnixMilli()
 	order.UpdatedAt = time.Now().UnixMilli()
-	order.IsActive = true
-	order.IsDelete = false
+	order.IsCancel = false
 
 	// Insert into database
 	err := models.InsertOneOrder(order)
