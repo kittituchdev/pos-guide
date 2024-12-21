@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/kittituchdev/pos-guide/config"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -48,4 +49,19 @@ func InsertOneOrder(order Order) error {
 	// Log inserted ID
 	fmt.Println("Inserted a record with ID:", result.InsertedID)
 	return nil
+}
+
+func FindAllOrder() ([]Order, error) {
+	var results []Order
+
+	collection := config.MongoClient.Database(config.DatabaseName).Collection(orderCollectionName)
+	cursor, err := collection.Find(context.TODO(), bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &results)
+	if err != nil {
+		return nil, err
+	}
+	return results, nil
 }

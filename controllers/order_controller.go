@@ -50,3 +50,22 @@ func CreateOrder(c *fiber.Ctx) error {
 		"message": "Order inserted successfully",
 	})
 }
+
+func GetAllOrder(c *fiber.Ctx) error {
+	// Get all orders
+
+	orders, err := models.FindAllOrder()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to get orders",
+		})
+	}
+
+	// Return success response
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": "Orders retrieved successfully",
+		"data":    orders,
+	})
+}

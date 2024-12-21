@@ -9,5 +9,6 @@ import (
 func OrderRoutes(app *fiber.App) {
 	api := app.Group("/api")
 
+	api.Get("/orders", controllers.GetAllOrder)
 	api.Post("/orders", controllers.CreateOrder)
 }
