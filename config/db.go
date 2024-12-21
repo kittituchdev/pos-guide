@@ -17,7 +17,7 @@ var (
 
 // Max retries and delay settings
 const (
-	MaxRetries       = 5
+	MaxRetries        = 5
 	InitialRetryDelay = 2 * time.Second
 )
 
