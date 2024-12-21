@@ -8,10 +8,12 @@ import (
 func UserRoutes(app *fiber.App) {
 	api := app.Group("/api")
 
-	// User routes
 	api.Get("/products", controllers.GetProducts)
-	api.Get("/products/:id", controllers.GetUser)
 	api.Post("/products", controllers.CreateProduct)
-	api.Put("/products/:id", controllers.UpdateUser)
-	api.Delete("/products/:id", controllers.DeleteUser)
+	api.Patch("/products/:id", controllers.UpdateProduct)
+	api.Patch("/products/:id/price", controllers.UpdateProductPrice)
+
+	// api.Get("/products/:id", controllers.GetUser)
+	// api.Put("/products/:id", controllers.UpdateUser)
+	// api.Delete("/products/:id", controllers.DeleteUser)
 }
