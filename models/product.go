@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// Product struct for database model
 type Product struct {
 	ID          primitive.ObjectID   `bson:"_id,omitempty" json:"id,omitempty"`
 	Name        string               `bson:"name" json:"name"`
@@ -21,29 +22,38 @@ type Product struct {
 	Categories  []primitive.ObjectID `bson:"categories" json:"categories"`
 	IsActive    bool                 `bson:"isActive" json:"isActive"`
 	IsDelete    bool                 `bson:"isDelete" json:"isDelete"`
-	CreatedAt   int64                `bson:"createdAt" json:"createdAt"` // Milliseconds since epoch
+	CreatedAt   int64                `bson:"createdAt" json:"createdAt"`
 	CreatedBy   string               `bson:"createdBy" json:"createdBy"`
-	UpdatedAt   int64                `bson:"updatedAt" json:"updatedAt"` // Milliseconds since epoch
+	UpdatedAt   int64                `bson:"updatedAt" json:"updatedAt"`
 	UpdatedBy   string               `bson:"updatedBy" json:"updatedBy"`
+}
+
+// UpdateProductInput struct for partial updates
+type UpdateProductInput struct {
+	Name        *string   `json:"name,omitempty"`
+	Description *string   `json:"description,omitempty"`
+	Price       *float64  `json:"price,omitempty"`
+	Stock       *int      `json:"stock,omitempty"`
+	Images      *[]string `json:"images,omitempty"`
+	Options     *[]primitive.ObjectID `json:"options,omitempty"`
+	Categories  *[]primitive.ObjectID `json:"categories,omitempty"`
+	IsActive    *bool     `json:"isActive,omitempty"`
+	IsDelete    *bool     `json:"isDelete,omitempty"`
+	UpdatedBy   *string   `json:"updatedBy,omitempty"`
 }
 
 var collectionName = "products"
 
 func InsertOneProduct(product Product) error {
-	// Context with timeout to avoid long waits
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// Get the collection
 	collection := config.MongoClient.Database(config.DatabaseName).Collection(collectionName)
-
-	// Insert the product
 	result, err := collection.InsertOne(ctx, product)
 	if err != nil {
-		return fmt.Errorf("failed to insert product: %v", err) // Return error instead of log.Fatal
+		return fmt.Errorf("failed to insert product: %v", err)
 	}
 
-	// Log inserted ID
 	fmt.Println("Inserted a record with ID:", result.InsertedID)
 	return nil
 }
@@ -63,13 +73,49 @@ func FindAllProduct() ([]Product, error) {
 	return results, nil
 }
 
-func UpdateProductPrice(productId string, price float64) error {
+func UpdateProduct(productId string, updates UpdateProductInput) error {
 	id, err := primitive.ObjectIDFromHex(productId)
 	if err != nil {
 		return err
 	}
+
 	filter := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{"price": price}}
+	updateFields := bson.M{}
+
+	// Dynamically build update fields based on provided input
+	if updates.Name != nil {
+		updateFields["name"] = *updates.Name
+	}
+	if updates.Description != nil {
+		updateFields["description"] = *updates.Description
+	}
+	if updates.Price != nil {
+		updateFields["price"] = *updates.Price
+	}
+	if updates.Stock != nil {
+		updateFields["stock"] = *updates.Stock
+	}
+	if updates.Images != nil {
+		updateFields["images"] = *updates.Images
+	}
+	if updates.Options != nil {
+		updateFields["options"] = *updates.Options
+	}
+	if updates.Categories != nil {
+		updateFields["categories"] = *updates.Categories
+	}
+	if updates.IsActive != nil {
+		updateFields["isActive"] = *updates.IsActive
+	}
+	if updates.IsDelete != nil {
+		updateFields["isDelete"] = *updates.IsDelete
+	}
+	if updates.UpdatedBy != nil {
+		updateFields["updatedBy"] = *updates.UpdatedBy
+	}
+	updateFields["updatedAt"] = time.Now().UnixMilli()
+
+	update := bson.M{"$set": updateFields}
 
 	collection := config.MongoClient.Database(config.DatabaseName).Collection(collectionName)
 	result, err := collection.UpdateOne(context.TODO(), filter, update)
@@ -79,85 +125,3 @@ func UpdateProductPrice(productId string, price float64) error {
 	fmt.Println("Modified count: ", result.ModifiedCount)
 	return nil
 }
-
-func UpdateProduct(productId string, product Product) error {
-	id, err := primitive.ObjectIDFromHex(productId)
-	if err != nil {
-		return err
-	}
-	filter := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{
-		"name":        product.Name,
-		"description": product.Description,
-		"options":     product.Options,
-		"categories":  product.Categories,
-		"price":       product.Price,
-		"stock":       product.Stock,
-		"updatedAt":   product.UpdatedAt,
-	}}
-
-	collection := config.MongoClient.Database(config.DatabaseName).Collection(collectionName)
-	result, err := collection.UpdateOne(context.TODO(), filter, update)
-	if err != nil {
-		return err
-	}
-	fmt.Println("Modified count: ", result.ModifiedCount)
-	return nil
-}
-
-// func InsertManyProducts(products []Product) error {
-// 	// Convert to slice of interface{}
-// 	newProducts := make([]interface{}, len(products))
-// 	for i, product := range products {
-// 		newProducts[i] = product
-// 	}
-
-// 	collection := config.MongoClient.Database(config.DatabaseName).Collection(collectionName)
-// 	result, err := collection.InsertMany(context.TODO(), newProducts)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	fmt.Println(result)
-// 	return err
-// }
-
-// func UpdateProduct(productId string, product Product) error {
-// 	id, err := primitive.ObjectIDFromHex(productId)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	filter := bson.M{"_id": id}
-// 	update := bson.M{"$set": bson.M{
-// 		"name":        product.Name,
-// 		"description": product.Description,
-// 		"price":       product.Price,
-// 		"stock":       product.Stock,
-// 		"createdAt":   product.CreatedAt,
-// 		"updatedAt":   product.UpdatedAt,
-// 	}}
-
-// 	collection := config.MongoClient.Database(config.DatabaseName).Collection(collectionName)
-// 	result, err := collection.UpdateOne(context.TODO(), filter, update)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	fmt.Println("Modified count: ", result.ModifiedCount)
-// 	return nil
-// }
-
-// func FindProductByName(productName string) []Product {
-// 	var results []Product
-
-// 	filter := bson.D{{Key: "name", Value: productName}}
-
-// 	collection := config.MongoClient.Database(config.DatabaseName).Collection(collectionName)
-// 	cursor, err := collection.Find(context.TODO(), filter)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	err = cursor.All(context.TODO(), &results)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	return results
-// }

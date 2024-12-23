@@ -24,10 +24,11 @@ type Order struct {
 }
 
 type OrderItem struct {
-	ProductID primitive.ObjectID `bson:"productID" json:"productID"`
-	Quantity  int                `bson:"quantity" json:"quantity"`
-	Price     float64            `bson:"price" json:"price"`
-	Total     float64            `bson:"total" json:"total"`
+	ProductID primitive.ObjectID   `bson:"productID" json:"productID"`
+	Quantity  int                  `bson:"quantity" json:"quantity"`
+	Options   []primitive.ObjectID `bson:"options" json:"options"`
+	Price     float64              `bson:"price" json:"price"`
+	Total     float64              `bson:"total" json:"total"`
 }
 
 var orderCollectionName = "orders"
