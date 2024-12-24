@@ -9,10 +9,12 @@ import (
 )
 
 func GetEnv(envName string) string {
-    err := godotenv.Load(filepath.Join(".", ".env"))
-    if err != nil {
-        log.Fatal("Error loading .env file")
-    }
+	if os.Getenv("ENV") != "production" {
+		err := godotenv.Load(filepath.Join(".", ".env"))
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
+	}
 
-    return os.Getenv(envName)
+	return os.Getenv(envName)
 }
