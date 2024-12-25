@@ -86,7 +86,10 @@ func UpdateProduct(c *fiber.Ctx) error {
 
 	// Parse request body into UpdateProductInput
 	var input models.UpdateProductInput
-
+	admin := "Admin"
+	input.UpdatedBy = &admin
+	updatedAt := time.Now().UnixMilli()
+	input.UpdatedAt = &updatedAt
 	if err := c.BodyParser(&input); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,

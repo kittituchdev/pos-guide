@@ -40,6 +40,7 @@ type UpdateProductInput struct {
 	IsActive    *bool     `json:"isActive,omitempty"`
 	IsDelete    *bool     `json:"isDelete,omitempty"`
 	UpdatedBy   *string   `json:"updatedBy,omitempty"`
+	UpdatedAt   *int64   `json:"updatedAt,omitempty"`
 }
 
 var collectionName = "products"
